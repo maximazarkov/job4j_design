@@ -44,7 +44,7 @@ public class ListUtilsTest {
     @Test
     public void whenRemoveIf() {
         List<Integer> input = new ArrayList<>(Arrays.asList(1, 3, 4));
-        Predicate<Integer> predicate = (p) -> Objects.equals(p, 2);
+        Predicate<Integer> predicate = (p) -> Objects.equals(p, 3);
         ListUtils.removeIf(input, predicate);
 
         Assert.assertEquals(input, Arrays.asList(1, 4));
@@ -53,7 +53,7 @@ public class ListUtilsTest {
     @Test
     public void whenReplaceIf() {
         List<Integer> input = new ArrayList<>(Arrays.asList(1, 3, 4));
-        Predicate<Integer> predicate = (p) -> Objects.equals(p, 2);
+        Predicate<Integer> predicate = (p) -> Objects.equals(p, 4);
         ListUtils.replaceIf(input, predicate, 5);
 
         Assert.assertEquals(input, Arrays.asList(1, 3, 5));
@@ -66,5 +66,14 @@ public class ListUtilsTest {
         ListUtils.removeAll(input, elements);
 
         Assert.assertEquals(input, Arrays.asList(1, 5));
+    }
+
+    @Test
+    public void whenRemoveAllWhereListRandom() {
+        List<Integer> input = new ArrayList<>(Arrays.asList(1, 4, 3, 2, 5));
+        List<Integer> elements = new ArrayList<>(Arrays.asList(3, 4));
+        ListUtils.removeAll(input, elements);
+
+        Assert.assertEquals(input, Arrays.asList(1, 2, 5));
     }
 }

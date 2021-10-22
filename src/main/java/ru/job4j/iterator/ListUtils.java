@@ -13,14 +13,8 @@ public class ListUtils {
      */
     public static <T> void addBefore(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        var i = list.listIterator();
-        while (i.hasNext()) {
-            if (i.nextIndex() == index) {
-                i.add(value);
-                break;
-            }
-            i.next();
-        }
+        var iterator = list.listIterator(index);
+        iterator.add(value);
     }
 
     /**
@@ -32,15 +26,9 @@ public class ListUtils {
      */
     public static <T> void addAfter(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        var i = list.listIterator();
-        while (i.hasNext()) {
-            if (i.nextIndex() == index) {
-                i.next();
-                i.add(value);
-                break;
-            }
-            i.next();
-        }
+        var iterator = list.listIterator(index);
+        iterator.next();
+        iterator.add(value);
     }
 
     /**
@@ -51,13 +39,12 @@ public class ListUtils {
      * @param <T> - тип объектов, над которыми проводятся объекты.
      */
     public static <T> void removeIf(List<T> list, Predicate<T> filter) {
-        var i = list.listIterator();
-        while (i.hasNext()) {
-            if (filter.test((T) Integer.valueOf(i.nextIndex()))) {
-                i.remove();
+        var iterator = list.listIterator();
+        while (iterator.hasNext()) {
+            if (filter.test(iterator.next())) {
+                iterator.remove();
                 break;
             }
-            i.next();
         }
     }
 
@@ -69,14 +56,12 @@ public class ListUtils {
      * @param <T> - тип объектов, над которыми проводятся объекты.
      */
     public static <T> void replaceIf(List<T> list, Predicate<T> filter, T value) {
-        var i = list.listIterator();
-        while (i.hasNext()) {
-            int index = i.nextIndex();
-            if (filter.test((T) Integer.valueOf(index))) {
-                list.set(index, value);
+        var iterator = list.listIterator();
+        while (iterator.hasNext()) {
+            if (filter.test(iterator.next())) {
+                list.set(iterator.previousIndex(), value);
                 break;
             }
-            i.next();
         }
     }
 
@@ -88,13 +73,11 @@ public class ListUtils {
      * @param <T> - тип объектов, над которыми проводятся объекты.
      */
     public static <T> void removeAll(List<T> list, List<T> elements) {
-        var i = list.listIterator();
-        while (i.hasNext()) {
-            T lst = i.next();
-            for (T element : elements) {
-                if (lst.equals(element)) {
-                    i.remove();
-                }
+        var iterator = list.listIterator();
+        while (iterator.hasNext()) {
+            if (elements.contains(iterator.next())) {
+                iterator.previous();
+                iterator.remove();
             }
         }
     }
