@@ -1,13 +1,17 @@
 package ru.job4j.io;
 
+import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.io.PrintWriter;
 
 public class ResultFile {
     public static void main(String[] args) {
-        try (FileOutputStream out = new FileOutputStream("result.txt")) {
-            out.write("Multiplication table".getBytes());
-            out.write(System.lineSeparator().getBytes());
-            out.write(getMaltyTable(9).getBytes());
+        try (PrintWriter out = new PrintWriter(
+                new BufferedOutputStream(
+                        new FileOutputStream("result.txt")))) {
+            out.println("Multiplication table");
+            out.println(System.lineSeparator());
+            out.println(getMaltyTable(9));
         } catch (Exception e) {
             e.printStackTrace();
         }
