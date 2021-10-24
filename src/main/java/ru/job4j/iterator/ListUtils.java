@@ -20,14 +20,13 @@ public class ListUtils {
     /**
      * Вставляет после индекса.
      * @param list - список объектов, над которым выполняется работа.
-     * @param index - место, перед которым выполняется вставка.
+     * @param index - место, после которого выполняется вставка.
      * @param value - значение (объект), которое необходимо вставить.
      * @param <T> - тип объектов, над которыми проводятся объекты.
      */
     public static <T> void addAfter(List<T> list, int index, T value) {
         Objects.checkIndex(index, list.size());
-        var iterator = list.listIterator(index);
-        iterator.next();
+        var iterator = list.listIterator(index + 1);
         iterator.add(value);
     }
 
@@ -76,7 +75,6 @@ public class ListUtils {
         var iterator = list.listIterator();
         while (iterator.hasNext()) {
             if (elements.contains(iterator.next())) {
-                iterator.previous();
                 iterator.remove();
             }
         }
