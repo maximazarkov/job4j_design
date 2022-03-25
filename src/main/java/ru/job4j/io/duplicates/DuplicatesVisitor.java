@@ -12,20 +12,13 @@ public class DuplicatesVisitor extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-        if (!file.toFile().isDirectory()) {
-
-            var fileProperty = new FileProperty(file.toFile().length(), file.getFileName().toString());
-            var listPath = fullList.get(fileProperty);
-            if (listPath == null) {
-                listPath = new LinkedList<>();
-            }
-            listPath.add(file);
-            fullList.put(new FileProperty(file.toFile().length(), file.getFileName().toString()), listPath);
-
-            if (listPath.size() > 1) {
-                System.out.println(listPath);
-            }
-
+        var listPath = fullList.computeIfAbsent(
+                new FileProperty(file.toFile().length(),
+                        file.getFileName().toString()), k -> new LinkedList<>());
+        listPath.add(file);
+        fullList.put(new FileProperty(file.toFile().length(), file.getFileName().toString()), listPath);
+        if (listPath.size() > 1) {
+            System.out.println(listPath);
         }
         return FileVisitResult.CONTINUE;
     }
