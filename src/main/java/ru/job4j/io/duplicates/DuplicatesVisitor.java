@@ -17,10 +17,18 @@ public class DuplicatesVisitor extends SimpleFileVisitor<Path> {
                         file.getFileName().toString()), k -> new LinkedList<>());
         listPath.add(file);
         fullList.put(new FileProperty(file.toFile().length(), file.getFileName().toString()), listPath);
-        if (listPath.size() > 1) {
-            System.out.println(listPath);
-        }
         return FileVisitResult.CONTINUE;
+    }
+
+    /**
+     * Выводит список дубликатов на экран
+     */
+    public void printDoubles() {
+        for (Map.Entry<FileProperty, List<Path>> entry : fullList.entrySet()) {
+            if (entry.getValue().size() > 1) {
+                System.out.println(entry.getValue());
+            }
+        }
     }
 
     /**
@@ -29,9 +37,7 @@ public class DuplicatesVisitor extends SimpleFileVisitor<Path> {
      */
     public Map<FileProperty, List<Path>> getDoubles() {
         Map<FileProperty, List<Path>> listDoubles = new HashMap<>();
-        Iterator<Map.Entry<FileProperty, List<Path>>> entries = fullList.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<FileProperty, List<Path>> entry = entries.next();
+        for (Map.Entry<FileProperty, List<Path>> entry : fullList.entrySet()) {
             if (entry.getValue().size() > 1) {
                 listDoubles.put(entry.getKey(), entry.getValue());
             }
