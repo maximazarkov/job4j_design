@@ -9,8 +9,14 @@ import java.util.function.Predicate;
 
 public class Search {
     public static void main(String[] args) throws IOException {
-        if (args.length < 2) {
+        if (args.length != 2) {
             throw new IllegalArgumentException("Error entering command parameters. Usage java -jar dir.jar ROOT_FOLDER FIND_EXT.");
+        }
+        if (!Files.exists(Paths.get(args[0]))) {
+            throw new IllegalArgumentException("Dir not exists. Usage java -jar dir.jar ROOT_FOLDER FIND_EXT.");
+        }
+        if (!args[1].matches("\\.[\\w]+")) {
+            throw new IllegalArgumentException("Error entering the extension mask. Usage java -jar dir.jar ROOT_FOLDER FIND_EXT. Example FIND_EXT: .pdf or .txt etc.");
         }
         Path start = Paths.get(args[0]);
         String endsWithParam = args[1];
