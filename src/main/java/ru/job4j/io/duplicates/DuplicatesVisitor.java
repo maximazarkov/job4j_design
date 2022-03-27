@@ -26,7 +26,9 @@ public class DuplicatesVisitor extends SimpleFileVisitor<Path> {
     public void printDoubles() {
         for (Map.Entry<FileProperty, List<Path>> entry : fullList.entrySet()) {
             if (entry.getValue().size() > 1) {
-                System.out.println(entry.getValue());
+                for (Path path : entry.getValue()) {
+                    System.out.println(path);
+                }
             }
         }
     }
