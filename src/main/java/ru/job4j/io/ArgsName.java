@@ -14,26 +14,34 @@ public class ArgsName {
 
     private void parse(String[] args) {
         for (String s : args) {
+            if (args.length == 0) {
+                throw new IllegalArgumentException("The list of arguments is missing");
+            }
             int index1 = s.indexOf("-");
             int index2 = s.indexOf("=");
             String key = s.substring(index1 + 1, index2);
             String value = s.substring(index2 + 1);
-            if (key.length() == 0) {
-                throw new IllegalArgumentException("The name of the parameter is not defined");
+            if (checkArguments(key, value)) {
+                values.put(key, value);
             }
-            if (value.length() == 0) {
-                throw new IllegalArgumentException("The parameter value is not defined");
-            }
-            values.put(key, value);
         }
     }
 
+    private boolean checkArguments(String key, String value) {
+        if (key.length() == 0) {
+            throw new IllegalArgumentException("The name of the parameter is not defined");
+        }
+        if (value.length() == 0) {
+            throw new IllegalArgumentException("The parameter value is not defined");
+        }
+        return true;
+    }
+
     public String get(String key) {
-        String result = values.get(key);
-        if (result == null) {
+        if (!values.containsKey(key)) {
             throw new IllegalArgumentException("Invalid parameter name specified");
         }
-        return result;
+        return values.get(key);
     }
 
     public static void main(String[] args) {
