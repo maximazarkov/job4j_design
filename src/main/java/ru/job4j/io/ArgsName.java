@@ -33,7 +33,7 @@ public class ArgsName {
      * @return - возвращает true, если строка удовлетворяет формату -key=value, где key и value - не пустые значения.
      */
     private boolean checkArguments(String s) {
-        Pattern pattern = Pattern.compile("^-[a-zA-Z]+=[-?\\w=.]+$");
+        Pattern pattern = Pattern.compile("^-[a-zA-Z]+=[-?\\w=.,\";:~\\\\]+$");
         Matcher matcher = pattern.matcher(s);
         if (!matcher.find()) {
             throw new IllegalArgumentException("The parameter " + s + " must match the format -key=value. ");
