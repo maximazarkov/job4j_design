@@ -4,12 +4,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+/**
+ * Программа парсинга CSV-файлов
+ * Пример запуска программы:
+ * java -jar target/csvReader.jar -path=file.csv -delimiter=";"  -out=stdout -filter=name,age
+ */
 public class CSVReader {
     /**
      * Метод парсинга CSV-файлов
-     * пример запуска программы:
-     * java -jar target/csvReader.jar -path=file.csv -delimiter=";"  -out=stdout -filter=name,age
      * @param argsName - параметры, переданные при запуске программы:
      *                 -path - путь источника данных
      *                 -out - путь к файлу с результатом
@@ -75,4 +80,24 @@ public class CSVReader {
         }
         return employee;
     }
+
+    /**
+     * Проверка формата заданной строки параметров
+     * @param s - строка параметра
+     * @return - возвращает true, если строка удовлетворяет формату -key=value, где key и value - не пустые значения.
+     */
+    private static boolean checkArguments(String s) {
+        Pattern pattern = Pattern.compile("^-[a-zA-Z]+=[-?\\w=.,\";:~\\\\]+$");
+        Matcher matcher = pattern.matcher(s);
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("The parameter " + s + " must match the format -key=value. ");
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+//        String[] param =
+        Arrays.stream(args).filter(CSVReader::checkArguments).forEach(System.out::println);
+    }
+
 }
