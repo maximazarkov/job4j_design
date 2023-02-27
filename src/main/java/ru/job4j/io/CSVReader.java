@@ -14,49 +14,55 @@ import java.util.regex.Pattern;
  */
 public class CSVReader {
     /**
-     * Метод парсинга CSV-файлов
+     * Парсинг входящих CSV-файлов и преобразование их в иной CSV-файл,
+     * составленный на основе переданного фильтра
      * @param argsName - параметры, переданные при запуске программы:
      *                 -path - путь источника данных
-     *                 -out - путь к файлу с результатом
+     *                 -out - путь к файлу с результатом. Значение stdout - вывод на консоль
      *                 -delimiter - разделитель, применяемый в CSV-файле
-     *                 -filter - названия столбцов для выборки. Эти данный
+     *                 -filter - названия столбцов для выборки. Эти данные
      *                 будут переданы в файл с результатами
      * @throws Exception - пробрасываем исключения
      */
+    @SuppressWarnings("checkstyle:InnerAssignment")
     public static void handle(ArgsName argsName) throws Exception {
         List<List> employers = parseFile(argsName);
+        List<List> data = new ArrayList<>();
+        StringBuffer dataSB = new StringBuffer();
 
-        //TODO выделить данную часть в отдельный метод getNameColumn
-        System.out.println(employers.get(0));
-        String[] param = {"name", "age"};
-        int count = 0;
-        int numParam = 2;
-        int[] numIndex = new int[numParam];
+        List<String> paramFilter;
+        paramFilter = splitRows(argsName);
+
+        int[] numIndex = new int[paramFilter.size()];
         int index = 0;
-        for (String s: param) {
-            while (index < numParam) {
-                if (employers.get(0).get(index).equals(s)) {
-                    System.out.println(index);
-                    numIndex[count++] = index;
-                    break;
-                }
-                index++;
-            }
+        for (int i = 0; i < paramFilter.size(); i++) {
+            numIndex[index++] = employers.get(0).indexOf(paramFilter.get(i));
         }
 
-        System.out.println(numIndex.toString());
+        for (List employer : employers) {
+            StringBuffer rowSB = new StringBuffer();
+            List<String> row = new ArrayList<>();
+            for (int i = 0; i < numIndex.length; i++) {
+                String s = (String) employer.get(numIndex[i]);
+                rowSB.append(s)
+                        .append((i < numIndex.length - 1) ? argsName.get("delimiter") : "");
+            }
+            rowSB.append(System.lineSeparator());
+            dataSB.append(rowSB);
+        }
 
-        String data = String.join(
-                System.lineSeparator(),
-                "name;age",
-                "Tom;20",
-                "Jack;25",
-                "William;30"
-        ).concat(System.lineSeparator());
-        Files.writeString(Path.of(argsName.get("out")), data);
+        Files.writeString(Path.of(argsName.get("out")), dataSB);
     }
 
-
+    private static List<String> splitRows(ArgsName argsName) {
+        List<String> result = new ArrayList<>();
+        var scanner = new Scanner(argsName.get("filter"))
+                .useDelimiter(",");
+        while (scanner.hasNext()) {
+            result.add(scanner.next());
+        }
+        return result;
+    }
 
     /**
      * Выполняет выгрузку файла в коллекцию для дальнейшей обработки
@@ -95,9 +101,12 @@ public class CSVReader {
         return true;
     }
 
-    public static void main(String[] args) {
-//        String[] param =
-        Arrays.stream(args).filter(CSVReader::checkArguments).forEach(System.out::println);
+    public static void main(String[] args) throws Exception {
+        String[] param = Arrays.stream(args)
+                .filter(CSVReader::checkArguments)
+                .toArray(String[]::new);
+        ArgsName argsName = ArgsName.of(param);
+        CSVReader.handle(argsName);
     }
 
 }
