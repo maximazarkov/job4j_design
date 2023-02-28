@@ -25,18 +25,16 @@ public class ArgsNameTest {
         assertThat(jvm.get("request"), equalTo("?msg=Exit="));
     }
 
-    //TODO Необходимо разобраться, как написать тест для исключений в Jupiter5
-    // Не понятно как вызвать правильно метод, в котором генерится исключение.
-//    @Test
-//    public void whenGetNotExist() {
-//        ArgsName jvm = ArgsName.of(new String[] {"-Xmx=512"});
-//        RuntimeException exception = assertThrows(IllegalArgumentException.class, jvm.get("Xms"));
-//        assertThat(exception.getMessage(), equalToIgnoringCase("Invalid parameter name specified"));
-//    }
-//
-//    @Test
-//    public void whenWrongSomeArgument() {
-//        RuntimeException exception = assertThrows(IllegalArgumentException.class, ArgsName.of(new String[] {"-enconding=UTF-8", "-Xmx="}));
-//        assertThat(exception.getMessage(), equalToIgnoringCase("Invalid parameter name specified"));
-//    }
+    @Test
+    public void whenGetNotExist() throws Exception {
+        ArgsName jvm = ArgsName.of(new String[] {"-Xmx=512"});
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> jvm.get("Xms"));
+        assertThat(thrown.getMessage(), equalToIgnoringCase("Invalid parameter name specified"));
+    }
+
+    @Test
+    public void whenWrongSomeArgument() {
+        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> ArgsName.of(new String[] {"-enconding=UTF-8", "-Xmx="}));
+        assertThat(thrown.getMessage(), equalTo("The parameter -Xmx= must match the format -key=value. "));
+    }
 }

@@ -21,14 +21,12 @@ public class ListUtilsTest {
         assertThat(input.containsAll(Arrays.asList(1, 2, 3)), is(true));
     }
 
-    //TODO Необходимо разобраться, как написать тест для исключений в Jupiter5.
-    // Не понятно как вызвать правильно метод, в котором генерится исключение.
-//    @Test
-//    public void whenAddBeforeWithInvalidIndex() {
-//        List<Integer> input = new ArrayList<>(Arrays.asList(1, 3));
-//        RuntimeException exception = assertThrows(IndexOutOfBoundsException.class, ListUtils.addBefore(input, 3, 2));
-//        assertThat(exception.getMessage(), equalToIgnoringCase("Invalid parameter name specified"));
-//    }
+    @Test
+    public void whenAddBeforeWithInvalidIndex() {
+        List<Integer> input = new ArrayList<>(Arrays.asList(1, 3));
+        Throwable thrown = assertThrows(IndexOutOfBoundsException.class, () -> ListUtils.addBefore(input, 3, 2));
+        assertThat(thrown.getMessage(), equalTo("Index 3 out of bounds for length 2"));
+    }
 
     @Test
     public void whenAddAfterLast() {
