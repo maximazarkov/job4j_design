@@ -1,4 +1,4 @@
-package ru.job4j.dataType;
+package ru.job4j.datatype;
 
 public class Calculator {
     public static void plus(int first, int second) {
