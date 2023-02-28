@@ -26,8 +26,7 @@ public class CSVReader {
      */
     @SuppressWarnings("checkstyle:InnerAssignment")
     public static void handle(ArgsName argsName) throws Exception {
-        List<List> employers = parseFile(argsName);
-        List<List> data = new ArrayList<>();
+        var employers = parseFile(argsName);
         StringBuffer dataSB = new StringBuffer();
 
         List<String> paramFilter;
@@ -35,13 +34,12 @@ public class CSVReader {
 
         int[] numIndex = new int[paramFilter.size()];
         int index = 0;
-        for (int i = 0; i < paramFilter.size(); i++) {
-            numIndex[index++] = employers.get(0).indexOf(paramFilter.get(i));
+        for (String value : paramFilter) {
+            numIndex[index++] = employers.get(0).indexOf(value);
         }
 
-        for (List employer : employers) {
-            StringBuffer rowSB = new StringBuffer();
-            List<String> row = new ArrayList<>();
+        for (var employer : employers) {
+            StringBuilder rowSB = new StringBuilder();
             for (int i = 0; i < numIndex.length; i++) {
                 String s = (String) employer.get(numIndex[i]);
                 rowSB.append(s)
@@ -51,7 +49,11 @@ public class CSVReader {
             dataSB.append(rowSB);
         }
 
-        Files.writeString(Path.of(argsName.get("out")), dataSB);
+        try {
+            Files.writeString(Path.of(argsName.get("out")), dataSB);
+        } catch (IOException e) {
+            System.out.println("Ошибка при записи итогового файла");
+        }
     }
 
     private static List<String> splitRows(ArgsName argsName) {
@@ -72,17 +74,20 @@ public class CSVReader {
      */
     private static List<List> parseFile(ArgsName argsName) throws IOException {
         List<List> employee = new LinkedList<>();
-        var scanner = new Scanner(Path.of(argsName.get("path")));
-        scanner.useDelimiter(System.getProperty("line.separator"));
+        try (var scanner = new Scanner(Path.of(argsName.get("path")))) {
+            scanner.useDelimiter(System.getProperty("line.separator"));
 
-        while (scanner.hasNext()) {
-            List<String> row = new LinkedList<>();
-            Scanner line = new Scanner(scanner.next());
-            line.useDelimiter(argsName.get("delimiter"));
-            while ((line.hasNext())) {
-                row.add(line.next());
+            while (scanner.hasNext()) {
+                List<String> row = new LinkedList<>();
+                Scanner line = new Scanner(scanner.next());
+                line.useDelimiter(argsName.get("delimiter"));
+                while ((line.hasNext())) {
+                    row.add(line.next());
+                }
+                employee.add(row);
             }
-            employee.add(row);
+        } catch (IOException e) {
+            System.out.println("Ошибка при парсинге файла");
         }
         return employee;
     }
