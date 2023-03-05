@@ -24,20 +24,16 @@ public class CSVReader {
      *                 будут переданы в файл с результатами
      * @throws Exception - пробрасываем исключения
      */
-    @SuppressWarnings("checkstyle:InnerAssignment")
     public static void handle(ArgsName argsName) throws Exception {
         var employers = parseFile(argsName);
-        StringBuffer dataSB = new StringBuffer();
-
+        StringBuilder dataSB = new StringBuilder();
         List<String> paramFilter;
         paramFilter = splitRows(argsName);
-
         int[] numIndex = new int[paramFilter.size()];
         int index = 0;
         for (String value : paramFilter) {
             numIndex[index++] = employers.get(0).indexOf(value);
         }
-
         for (var employer : employers) {
             StringBuilder rowSB = new StringBuilder();
             for (int i = 0; i < numIndex.length; i++) {
@@ -48,9 +44,13 @@ public class CSVReader {
             rowSB.append(System.lineSeparator());
             dataSB.append(rowSB);
         }
-
         try {
-            Files.writeString(Path.of(argsName.get("out")), dataSB);
+            String out = argsName.get("out").toLowerCase();
+            if ("stdout".equals(out)) {
+                System.out.print(dataSB);
+            } else {
+                Files.writeString(Path.of(out), dataSB);
+            }
         } catch (IOException e) {
             System.out.println("Ошибка при записи итогового файла");
         }
@@ -72,11 +72,10 @@ public class CSVReader {
      * @return - возвращает коллекцию, полученных из файла источника
      * @throws IOException - пробрасывает исключения, связанный с доступом к файлу
      */
-    private static List<List> parseFile(ArgsName argsName) throws IOException {
-        List<List> employee = new LinkedList<>();
+    private static List<List<String>> parseFile(ArgsName argsName) throws IOException {
+        List<List<String>> employee = new LinkedList<>();
         try (var scanner = new Scanner(Path.of(argsName.get("path")))) {
             scanner.useDelimiter(System.getProperty("line.separator"));
-
             while (scanner.hasNext()) {
                 List<String> row = new LinkedList<>();
                 Scanner line = new Scanner(scanner.next());
@@ -92,26 +91,10 @@ public class CSVReader {
         return employee;
     }
 
-    /**
-     * Проверка формата заданной строки параметров
-     * @param s - строка параметра
-     * @return - возвращает true, если строка удовлетворяет формату -key=value, где key и value - не пустые значения.
-     */
-    private static boolean checkArguments(String s) {
-        Pattern pattern = Pattern.compile("^-[a-zA-Z]+=[-?\\w=.,\";:~\\\\]+$");
-        Matcher matcher = pattern.matcher(s);
-        if (!matcher.find()) {
-            throw new IllegalArgumentException("The parameter " + s + " must match the format -key=value. ");
-        }
-        return true;
-    }
-
     public static void main(String[] args) throws Exception {
         String[] param = Arrays.stream(args)
-                .filter(CSVReader::checkArguments)
                 .toArray(String[]::new);
         ArgsName argsName = ArgsName.of(param);
         CSVReader.handle(argsName);
     }
-
 }
