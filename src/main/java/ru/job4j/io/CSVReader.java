@@ -93,25 +93,36 @@ public class CSVReader {
         return employee;
     }
 
+    private static void checkArgs(ArgsName argsName) {
+        if (!(argsName.get("path").endsWith(".csv"))) {
+            throw new IllegalArgumentException("Для файла источника необходимо использовать расширение .csv (-path=[nameFile].csv)");
+        }
+        if (!(("stdout".equals(argsName.get("out"))) || (argsName.get("out")).endsWith(".csv"))) {
+            throw new IllegalArgumentException("Для вывода необходимо использовать либо параметр stdout, либо файл с расширением .csv (-out=stdout или -out=[nameFile].csv)");
+        }
+        if (!(argsName.get("delimiter").matches(";,"))) {
+            throw new IllegalArgumentException("Допустимые значения delimiter - знак ; или ,");
+        }
+        if (!(argsName.get("filter").length() > 0)) {
+            throw new IllegalArgumentException("Не указан фильтр в параметре filter");
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         if (args.length == 4) {
             ArgsName argsName = ArgsName.of(args);
-            if ((argsName.get("path").length() > 0)
-                    && (argsName.get("out").length() > 0)
-                    && (argsName.get("delimiter").length() > 0)
-                    && (argsName.get("filter").length() > 0)
-            ) {
-                CSVReader.handle(argsName);
-            } else {
-                System.out.println("Допустимо применять следующие параметры: -path=, -out=, -delimiter= и -filter=");
-            }
-
+            checkArgs(argsName);
+            CSVReader.handle(argsName);
         } else {
-            System.out.println("Программе необходимо передать 4 параметра:");
-            System.out.println("-path - путь источника данных");
-            System.out.println("-out - путь к файлу с результатом. Значение stdout - вывод на консоль");
-            System.out.println("-delimiter - разделитель, применяемый в CSV-файле");
-            System.out.println("-filter - названия столбцов для выборки. Эти данные будут переданы в файл с результатами");
+            String e = String.join(
+                    System.lineSeparator(),
+                    "Программе необходимо передать 4 параметра:",
+                    "-path - путь источника данных",
+                    "-out - путь к файлу с результатом. Значение stdout - вывод на консоль",
+                    "-delimiter - разделитель, применяемый в CSV-файле",
+                    "-filter - названия столбцов для выборки. Эти данные будут переданы в файл с результатами"
+                    );
+            throw new IllegalArgumentException(e);
         }
     }
 }
