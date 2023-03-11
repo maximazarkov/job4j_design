@@ -1,7 +1,7 @@
 package ru.job4j.io;
 
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
 
 public class ResultFileTest {
     @Test
@@ -12,6 +12,6 @@ public class ResultFileTest {
         expect.append("-+------").append(LS);
         expect.append("1| 1   2   ").append(LS);
         expect.append("2| 2   4   ").append(LS);
-        MatcherAssert.assertThat(expect.toString(), equals(ResultFile.getMaltyTable(2)));
+        assertThat(expect.toString()).isEqualTo(ResultFile.getMaltyTable(2));
     }
 }

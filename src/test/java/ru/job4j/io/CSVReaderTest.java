@@ -2,8 +2,7 @@ package ru.job4j.io;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.assertj.core.api.Assertions.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
@@ -36,7 +35,7 @@ public class CSVReaderTest {
         ).concat(System.lineSeparator());
         CSVReader.handle(argsName);
         String strFile = Files.readString(target.toPath());
-        assertThat(strFile, equalTo(expected));
+        assertThat(strFile).isEqualTo(expected);
     }
 
     @Test
@@ -63,7 +62,7 @@ public class CSVReaderTest {
                 "Secondary special,30,Brown"
         ).concat(System.lineSeparator());
         CSVReader.handle(argsName);
-        assertThat(Files.readString(target.toPath()), equalTo(expected));
+        assertThat(Files.readString(target.toPath())).isEqualTo(expected);
     }
 
     @Test
@@ -90,6 +89,6 @@ public class CSVReaderTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
         CSVReader.handle(argsName);
-        assertThat(out.toString(), equalTo(expected));
+        assertThat(out.toString()).isEqualTo(expected);
     }
 }
