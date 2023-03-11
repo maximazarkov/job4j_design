@@ -1,7 +1,9 @@
 package ru.job4j.iterator;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +18,14 @@ public class ListUtilsTest {
         List<Integer> input = new ArrayList<>(Arrays.asList(1, 3));
         ListUtils.addBefore(input, 1, 2);
 
-        Assert.assertEquals(input, Arrays.asList(1, 2, 3));
+        assertThat(input.containsAll(Arrays.asList(1, 2, 3)), is(true));
     }
 
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void whenAddBeforeWithInvalidIndex() {
         List<Integer> input = new ArrayList<>(Arrays.asList(1, 3));
-        ListUtils.addBefore(input, 3, 2);
+        Throwable thrown = assertThrows(IndexOutOfBoundsException.class, () -> ListUtils.addBefore(input, 3, 2));
+        assertThat(thrown.getMessage(), equalTo("Index 3 out of bounds for length 2"));
     }
 
     @Test
@@ -30,7 +33,7 @@ public class ListUtilsTest {
         List<Integer> input = new ArrayList<>(Arrays.asList(0, 1, 2));
         ListUtils.addAfter(input, 2, 3);
 
-        Assert.assertEquals(input, Arrays.asList(0, 1, 2, 3));
+        assertThat(input.equals(Arrays.asList(0, 1, 2, 3)), is(true));
     }
 
     @Test
@@ -38,7 +41,7 @@ public class ListUtilsTest {
         List<Integer> input = new ArrayList<>(Arrays.asList(1, 3, 4));
         ListUtils.addAfter(input, 1, 2);
 
-        Assert.assertEquals(input, Arrays.asList(1, 3, 2, 4));
+        assertThat(input.equals(Arrays.asList(1, 3, 2, 4)), is(true));
     }
 
     @Test
@@ -47,7 +50,7 @@ public class ListUtilsTest {
         Predicate<Integer> predicate = (p) -> Objects.equals(p, 3);
         ListUtils.removeIf(input, predicate);
 
-        Assert.assertEquals(input, Arrays.asList(1, 4));
+        assertThat(input.equals(Arrays.asList(1, 4)), is(true));
     }
 
     @Test
@@ -56,7 +59,7 @@ public class ListUtilsTest {
         Predicate<Integer> predicate = (p) -> Objects.equals(p, 4);
         ListUtils.replaceIf(input, predicate, 5);
 
-        Assert.assertEquals(input, Arrays.asList(1, 3, 5));
+        assertThat(input.equals(Arrays.asList(1, 3, 5)), is(true));
     }
 
     @Test
@@ -65,7 +68,7 @@ public class ListUtilsTest {
         List<Integer> elements = new ArrayList<>(Arrays.asList(3, 4));
         ListUtils.removeAll(input, elements);
 
-        Assert.assertEquals(input, Arrays.asList(1, 5));
+       assertThat(input.equals(Arrays.asList(1, 5)), is(true));
     }
 
     @Test
@@ -74,6 +77,6 @@ public class ListUtilsTest {
         List<Integer> elements = new ArrayList<>(Arrays.asList(3, 4));
         ListUtils.removeAll(input, elements);
 
-        Assert.assertEquals(input, Arrays.asList(1, 2, 5));
+        assertThat(input.equals(Arrays.asList(1, 2, 5)), is(true));
     }
 }
