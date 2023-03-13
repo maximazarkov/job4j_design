@@ -2,14 +2,34 @@
 <!DOCTYPE module PUBLIC
         "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
         "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+<!-- Модуль Checker. Это родительский модуль, который предоставляет функциональность для проверки набора файлов.-->
+<!-- В этом модуле находятся все правила, свойства и другие модули из этого файла -->
 <module name="Checker">
 
+    <!-- File charset must be UTF-8 -->
+    <property name="charset" value="UTF-8" />
     <!--Расширение файла должно быть java, properties, xml-->
     <property name="fileExtensions" value="java, properties, xml"/>
 
     <!-- Checks for Size Violations.                    -->
     <!-- See http://checkstyle.sf.net/config_sizes.html -->
+    <!-- - Модуль FileLength проверяет длину файла/класса в строках. Чем больше строк находится в одном файле,-->
+    <!--тем сложнее анализировать такой код. Данная настройка помогает не только поддерживать стиль оформления,-->
+    <!--но и не позволяет делать большие классы, а заставляет разбивать классы на маленькие, каждый из которых имеет-->
+    <!--свою ответственность, тем самым улучшая дизайн класса и программы в целом. По умолчанию установлено 2000 строк.-->
     <module name="FileLength"/>
+
+    <!-- Checks for Size Violations.                    -->
+    <!-- See http://checkstyle.sf.net/config_sizes.html -->
+    <!-- - Модуль LineLength проверяет длину строки (В курсе Job4j сейчас не используется). Для удобного-->
+    <!-- чтения кода никакие строки не должны выходить за границы экрана, чтобы не нужно было пользоваться-->
+    <!-- прокруткой, чтобы прочитать скрытую часть. По умолчанию стоит 80 символов, у нас было заменено на 100.-->
+    <!-- При выходе размера строки за пределы 100 символов требуется разбить строку на две или более частей-->
+    <!-- в зависимости от того, что разбиваем.-->
+    <module name="LineLength">
+        <property name="fileExtensions" value="java" />
+        <property name="max" value="100" />
+    </module>
 
     <!-- Checks for Headers                                -->
     <!-- See http://checkstyle.sf.net/config_header.html   -->
@@ -18,10 +38,48 @@
     <!--   <property name="fileExtensions" value="java"/> -->
     <!-- </module> -->
 
+    <!-- - Модуль TreeWalker. Это следующая ветвь иерархии (наследник от Checker), которая отвечает за выполнение
+        проверок, которые в ней находятся.
+    -->
     <module name="TreeWalker">
+
+        <!-- Check that the parts of a class? record, declaration -->
+        <!-- appear in the order suggested by the Java Code Conventions -->
+        <!-- - Модуль DeclarationOrder (В курсе Job4j сейчас не используется). Проверяет порядок расположения
+            элементов в классе, т.е. последовательность расположения переменных, конструкторов, методов.
+        -->
+        <module name="DeclarationOrder" />
+
+        <!--  - Модуль EmptyLineSeparator. Проверяет, что методы, конструкторы и переменные отделены друг от друга -->
+        <!-- только одной пустой строкой. Переменные можно определить без разделителя, но по Java Code Conventions -->
+        <!-- лучше их всё-таки отделять друг от друга, чтобы можно было удобно написать к ним комментарии. -->
+        <!-- В качестве разделителя выбрана именно одна пустая строка, так как это минимальный адекватно читаемый -->
+        <!-- разделитель. Минимальный, так как одна из главных задач при написании кода - это его легкая читаемость, -->
+        <!-- а увеличение разрывов между членами класса, особенно когда они еще и разные - где-то 2, где-то 3 строки, -->
+        <!-- будет только затруднять чтение.-->
+        <module name="EmptyLineSeparator"> <!-- Java Style Guide: Source file structure -->
+            <property name="tokens" value="
+            CLASS_DEF, ENUM_DEF, INTERFACE_DEF, CTOR_DEF, STATIC_INIT, INSTANCE_INIT, VARIABLE_DEF, METHOD_DEF"/>
+            <property name="allowNoEmptyLineBetweenFields" value="true"/>
+            <property name="allowMultipleEmptyLines" value="false"/>
+            <property name="allowMultipleEmptyLinesInsideClassMembers" value="false"/>
+        </module>
+
+        <!-- - Модуль VisibilityModifier проверяет модификаторы доступа членов класса (В курсе Job4j сейчас -->
+        <!-- не используется). Проверяет у полей и методов обязательное наличие модификатора, а у поля он должен -->
+        <!-- быть обязательно private. Исключением может быть только модификатор public у поля в случае, когда -->
+        <!-- оно является константой (final / static final). Данная проверка делается для того, чтобы объект, -->
+        <!-- который мы создаём, содержал только публичные методы, доступные для использования, а доступ к его -->
+        <!-- данным был закрыт, то есть данная проверка заставляет нас применять инкапсуляцию. Таким образом, -->
+        <!-- пользователь объекта сможет пользоваться только общедоступными методами и не сможет залезть внутрь -->
+        <!-- объекта и нарушить логику работы программы. Также проверяется, что статические поля должны быть -->
+        <!-- объявлены раньше нестатических.-->
+        <module name="VisibilityModifier" />
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
+        <!-- - Модули проверки имён. Все имена переменных, методов, классов, пакетов, типов, параметров и т.д. -->
+        <!-- имеют свои общепризнанные способы написания:-->
         <module name="ConstantName"/>
         <!--<module name="LocalFinalVariableName"/>-->
         <module name="LocalVariableName"/>
@@ -34,14 +92,22 @@
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
 
-        <!-- Checks for Size Violations.                    -->
-        <!-- See http://checkstyle.sf.net/config_sizes.html -->
-        <!--<module name="LineLength"/>-->
-        <module name="MethodLength"/>
+        <!-- - Модуль MethodLength. Проверяет количество строк в методах и конструкторах. У нас установлен -->
+        <!--максимум 100 строк. Если в вашем методе или конструкторе более 100 строк, то, вероятно, он много всего в -->
+        <!--себе содержит, и можно разбить его на более мелкие отдельные методы, выполняющие свою задачу.-->
+        <module name="MethodLength">
+            <property name="tokens" value="METHOD_DEF"/>
+            <property name="max" value="100"/>
+        </module>
+
+        <!-- - Модуль ParameterNumber. Проверяет количество объявленных параметров в методе или конструкторе. -->
+        <!-- По умолчанию может быть задано не более 7 параметров. Большое количество параметров скорее всего также -->
+        <!-- говорит о том, что этот класс/метод много на себя берёт.        -->
         <module name="ParameterNumber"/>
 
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+        <!-- - Модули проверки различных операторов и конструкций на наличие пробела перед ними / после них.-->
         <module name="EmptyForIteratorPad"/>
         <module name="GenericWhitespace"/>
         <module name="MethodParamPad"/>
@@ -59,7 +125,6 @@
         <!-- Checks for blocks. You know, those {}'s         -->
         <!-- See http://checkstyle.sf.net/config_blocks.html -->
         <module name="AvoidNestedBlocks"/>
-        <module name="EmptyBlock"/>
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
         <module name="RightCurly"/>
@@ -90,7 +155,10 @@
         <!--<module name="FinalParameters"/>-->
         <module name="TodoComment"/>
         <module name="UpperEll"/>
-
+        <module name="EmptyBlock"/>
+        <module name="EmptyBlock">
+            <property name="tokens" value="LITERAL_CATCH"/>
+        </module>
     </module>
 
 </module>

@@ -33,7 +33,10 @@ public class ArgsNameTest {
 
     @Test
     public void whenWrongSomeArgument() {
-        Throwable thrown = assertThrows(IllegalArgumentException.class, () -> ArgsName.of(new String[] {"-enconding=UTF-8", "-Xmx="}));
-        assertThat(thrown.getMessage()).isEqualTo("The parameter -Xmx= must match the format -key=value. ");
+        Throwable thrown = assertThrows(
+                IllegalArgumentException.class,
+                () -> ArgsName.of(new String[] {"-enconding=UTF-8", "-Xmx="}));
+        assertThat(thrown.getMessage())
+                .isEqualTo("The parameter -Xmx= must match the format -key=value. ");
     }
 }

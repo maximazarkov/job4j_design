@@ -22,7 +22,8 @@ public class ListUtilsTest {
     @Test
     public void whenAddBeforeWithInvalidIndex() {
         List<Integer> input = new ArrayList<>(Arrays.asList(1, 3));
-        Throwable thrown = assertThrows(IndexOutOfBoundsException.class, () -> ListUtils.addBefore(input, 3, 2));
+        Throwable thrown = assertThrows(IndexOutOfBoundsException.class,
+                () -> ListUtils.addBefore(input, 3, 2));
         assertThat(thrown.getMessage()).isEqualTo("Index 3 out of bounds for length 2");
     }
 

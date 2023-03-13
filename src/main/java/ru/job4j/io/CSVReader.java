@@ -61,7 +61,8 @@ public class CSVReader {
                 result.add(scanner.next());
             }
         } catch (Exception e) {
-            System.out.println("Не удалось обработать названия столбцов, переданных в параметре filter");
+            System.out.println("Не удалось обработать названия столбцов, "
+                    + "переданных в параметре filter");
         }
         return result;
     }
@@ -84,7 +85,8 @@ public class CSVReader {
                     }
                     employee.add(row);
                 } catch (Exception e) {
-                    System.out.println("Ошибка при парсинге строки из файла по параметру delimiter");
+                    System.out.println("Ошибка при парсинге строки из "
+                            + "файла по параметру delimiter");
                 }
             }
         } catch (IOException e) {
@@ -95,10 +97,12 @@ public class CSVReader {
 
     private static void checkArgs(ArgsName argsName) {
         if (!(argsName.get("path").endsWith(".csv"))) {
-            throw new IllegalArgumentException("Для файла источника необходимо использовать расширение .csv (-path=[nameFile].csv)");
+            throw new IllegalArgumentException("Для файла источника необходимо использовать "
+                    + "расширение .csv (-path=[nameFile].csv)");
         }
         if (!(("stdout".equals(argsName.get("out"))) || (argsName.get("out")).endsWith(".csv"))) {
-            throw new IllegalArgumentException("Для вывода необходимо использовать либо параметр stdout, либо файл с расширением .csv (-out=stdout или -out=[nameFile].csv)");
+            throw new IllegalArgumentException("Для вывода необходимо использовать либо параметр "
+                    + "stdout, либо файл с расширением .csv (-out=stdout или -out=[nameFile].csv)");
         }
         if (!(argsName.get("delimiter").matches(";,"))) {
             throw new IllegalArgumentException("Допустимые значения delimiter - знак ; или ,");
@@ -120,7 +124,8 @@ public class CSVReader {
                     "-path - путь источника данных",
                     "-out - путь к файлу с результатом. Значение stdout - вывод на консоль",
                     "-delimiter - разделитель, применяемый в CSV-файле",
-                    "-filter - названия столбцов для выборки. Эти данные будут переданы в файл с результатами"
+                    "-filter - названия столбцов для выборки. "
+                            + "Эти данные будут переданы в файл с результатами"
                     );
             throw new IllegalArgumentException(e);
         }
