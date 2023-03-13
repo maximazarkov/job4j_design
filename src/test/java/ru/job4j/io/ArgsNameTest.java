@@ -7,6 +7,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ArgsNameTest {
 
     @Test
+    public void whenUnixPath() {
+        ArgsName jvm = ArgsName.of(new String[] {"-path=/tmp/junit/source.csv"});
+        assertThat(jvm.get("path")).isEqualTo("/tmp/junit/source.csv");
+    }
+
+    @Test
+    public void whenWindowsPath() {
+        ArgsName jvm = ArgsName.of(new String[] {"-path=c:\\tmp\\junit\\source.csv"});
+        assertThat(jvm.get("path")).isEqualTo("c:\\tmp\\junit\\source.csv");
+    }
+
+    @Test
     public void whenGetFirst() {
         ArgsName jvm = ArgsName.of(new String[] {"-Xmx=512", "-encoding=UTF-8"});
         assertThat(jvm.get("Xmx")).isEqualTo("512");

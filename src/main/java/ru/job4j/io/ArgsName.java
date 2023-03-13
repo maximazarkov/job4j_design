@@ -34,7 +34,8 @@ public class ArgsName {
      * где key и value - не пустые значения.
      */
     private boolean checkArguments(String s) {
-        Pattern pattern = Pattern.compile("^-[a-zA-Z]+=[-?\\w=.,\";:~\\\\]+$");
+        String regex = "^-[a-zA-Z]+=[-?\\w=.,\";:~\\\\\\/]+$";
+        Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(s);
         if (!matcher.find()) {
             throw new IllegalArgumentException("The parameter "
