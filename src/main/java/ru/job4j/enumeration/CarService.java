@@ -18,7 +18,8 @@ public class CarService {
                 + order.getStatus().getMessage());
         Status[] statuses = Status.values();
         for (Status s : statuses) {
-            System.out.println("Название статуса: " + s.name() + ", Порядковый номер статуса: " + s.ordinal());
+            System.out.println("Название статуса: " + s.name()
+                    + ", Порядковый номер статуса: " + s.ordinal());
         }
         String accepted = "ACCEPTED";
         Status status = Status.valueOf(accepted);
